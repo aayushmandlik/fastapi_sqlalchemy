@@ -1,0 +1,4 @@
+.env
+sqlvenv
+__pycache__
+.DS_Store
