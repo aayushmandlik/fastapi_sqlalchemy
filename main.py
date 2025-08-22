@@ -1,30 +1,11 @@
 from fastapi import FastAPI
-from typing import Optional
-from pydantic import BaseModel
-
-class Blog(BaseModel):
-    title: str
-    body: str
-    published_at: Optional[str]
-
+from blogs import models
+from blogs.database import engine
+from blogs.routers.blog import router as blog_router
+from blogs.routers.user import router as user_router
+models.Base.metadata.create_all(engine)
 
 app = FastAPI()
 
-@app.get("/")
-def start():
-    return {"message": "Hello"}
-
-@app.get("/blog/{id}")
-def blog_with_path_parameter(id:int):
-    return {"message": f"blog with {id}"}
-
-@app.get("/blog")
-def blog_with_query_parameter(limit=10,published:bool = True,sort: Optional[str]=None):
-    if published:
-        return {"message": f"{limit} published blogs from db"}
-    else:
-        return{"message": f"{limit} unpublished blogs from db"}
-    
-@app.post("/blog")
-def create_blog(blog: Blog):
-    return {"message": f"Blog of title '{blog.title}' created"}
+app.include_router(blog_router)
+app.include_router(user_router)

@@ -20,3 +20,7 @@ class UserResponse(BaseModel):
 class BlogResponse(Blog):
     creator: UserResponse
     pass
+
+class Login(BaseModel):
+    username: str
+    password: str
