@@ -1,6 +1,6 @@
 from passlib.context import CryptContext
 
-pwd_cxt = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_cxt = CryptContext(schemes=["argon2"], deprecated="auto")
 
 class Hash():
     def bcrypt(password: str):

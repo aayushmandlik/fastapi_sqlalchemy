@@ -5,17 +5,18 @@ import models
 from database import engine,get_db
 from sqlalchemy.orm import Session
 from repository import blog as blog_repository
+from oauth2 import get_current_user
 
 models.Base.metadata.create_all(engine)
 
 router = APIRouter(prefix="/blog",tags=['Blogs'])
 
 @router.get("/",response_model=List[schemas.BlogResponse])
-def get_all_blogs(db: Session = Depends(get_db)):
+def get_all_blogs(db: Session = Depends(get_db), current_user: schemas.User = Depends(get_current_user)):
     return blog_repository.get_all(db)
 
 @router.get("/{id}",response_model=schemas.BlogResponse)
-def blog_with_id(id,response:Response,db: Session = Depends(get_db)):
+def blog_with_id(id,response:Response,db: Session = Depends(get_db), current_user: schemas.User = Depends(get_current_user)):
     return blog_repository.get_blog_by_id(id,db)
     
 
@@ -27,14 +28,14 @@ def blog_with_id(id,response:Response,db: Session = Depends(get_db)):
 #         return{"message": f"{limit} unpublished blogs from db"}
     
 @router.post("/", status_code=status.HTTP_201_CREATED)
-def create_blog(request: schemas.Blog, db: Session = Depends(get_db)):
+def create_blog(request: schemas.Blog, db: Session = Depends(get_db), current_user: schemas.User = Depends(get_current_user)):
     return blog_repository.create(request,db)
 
 @router.put("/{id}",status_code=status.HTTP_202_ACCEPTED)
-def update_blog(id,request: schemas.Blog,db: Session=Depends(get_db)):
+def update_blog(id,request: schemas.Blog,db: Session=Depends(get_db), current_user: schemas.User = Depends(get_current_user)):
     return blog_repository.update(id,request,db)
     
 
 @router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
-def delete_blog(id,db: Session = Depends(get_db)):
+def delete_blog(id,db: Session = Depends(get_db), current_user: schemas.User = Depends(get_current_user)):
     return blog_repository.delete_blog(id,db)
